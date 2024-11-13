@@ -1,0 +1,259 @@
+'use client'
+
+import { motion } from 'framer-motion'
+import { Button } from '@/components/ui/button'
+import { 
+  Users, 
+  Zap, 
+  Shield, 
+  Globe, 
+  ArrowRight, 
+  CheckCircle,
+  Star,
+  Play
+} from 'lucide-react'
+import Link from 'next/link'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
+
+const features = [
+  {
+    icon: Users,
+    title: 'Real-time Collaboration',
+    description: 'Work together seamlessly with live updates, cursors, and instant synchronization across all devices.'
+  },
+  {
+    icon: Zap,
+    title: 'Lightning Fast',
+    description: 'Built with Next.js 14 and optimized for speed. Experience instant loading and smooth interactions.'
+  },
+  {
+    icon: Shield,
+    title: 'Enterprise Security',
+    description: 'Bank-level security with end-to-end encryption, SSO integration, and compliance standards.'
+  },
+  {
+    icon: Globe,
+    title: 'Global Access',
+    description: 'Access your workspace from anywhere with multi-language support and offline capabilities.'
+  }
+]
+
+const testimonials = [
+  {
+    name: 'Hiroshi Tanaka',
+    role: 'Engineering Manager at Sony',
+    content: 'TeamFlow transformed how our distributed team collaborates. The real-time features are incredible.',
+    avatar: '/avatars/hiroshi.jpg'
+  },
+  {
+    name: 'Sarah Chen',
+    role: 'Product Lead at Rakuten',
+    content: 'The best project management tool we\'ve used. Clean interface and powerful features.',
+    avatar: '/avatars/sarah.jpg'
+  },
+  {
+    name: 'Michael Rodriguez',
+    role: 'CTO at StartupXYZ',
+    content: 'Seamless integration with our existing workflow. Our productivity increased by 40%.',
+    avatar: '/avatars/michael.jpg'
+  }
+]
+
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      {/* Navigation */}
+      <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">TF</span>
+              </div>
+              <span className="text-xl font-bold text-gray-900 dark:text-white">TeamFlow</span>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <ThemeToggle />
+              <Link href="/auth/signin">
+                <Button variant="ghost">Sign In</Button>
+              </Link>
+              <Link href="/auth/signup">
+                <Button>Get Started</Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-6">
+              Collaborate in
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Real-time</span>
+            </h1>
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
+              The modern workspace for teams that move fast. Manage projects, collaborate seamlessly, 
+              and ship faster with TeamFlow's real-time collaboration platform.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+              <Link href="/auth/signup">
+                <Button size="lg" className="text-lg px-8 py-4">
+                  Start Free Trial
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Button variant="outline" size="lg" className="text-lg px-8 py-4">
+                <Play className="mr-2 h-5 w-5" />
+                Watch Demo
+              </Button>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex items-center space-x-1">
+                <CheckCircle className="h-4 w-4 text-green-500" />
+                <span>Free 14-day trial</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <CheckCircle className="h-4 w-4 text-green-500" />
+                <span>No credit card required</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <CheckCircle className="h-4 w-4 text-green-500" />
+                <span>Cancel anytime</span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-800">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Everything you need to collaborate
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300">
+              Powerful features designed for modern teams
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="text-center p-6 rounded-xl bg-gray-50 dark:bg-gray-700 hover:shadow-lg transition-shadow"
+              >
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <feature.icon className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  {feature.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Trusted by teams worldwide
+            </h2>
+            <div className="flex items-center justify-center space-x-1 mb-4">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+              ))}
+              <span className="ml-2 text-gray-600 dark:text-gray-300">4.9/5 from 2,000+ reviews</span>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={testimonial.name}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg"
+              >
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  "{testimonial.content}"
+                </p>
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+                    <span className="text-white font-semibold text-sm">
+                      {testimonial.name.split(' ').map(n => n[0]).join('')}
+                    </span>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-gray-900 dark:text-white">
+                      {testimonial.name}
+                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      {testimonial.role}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold text-white mb-4">
+            Ready to transform your workflow?
+          </h2>
+          <p className="text-xl text-blue-100 mb-8">
+            Join thousands of teams already using TeamFlow to collaborate better.
+          </p>
+          <Link href="/auth/signup">
+            <Button size="lg" variant="secondary" className="text-lg px-8 py-4">
+              Start Your Free Trial
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="flex items-center justify-center space-x-2 mb-4">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">TF</span>
+            </div>
+            <span className="text-xl font-bold">TeamFlow</span>
+          </div>
+          <p className="text-gray-400 mb-4">
+            Built with ❤️ for modern teams
+          </p>
+          <p className="text-sm text-gray-500">
+            © 2024 TeamFlow. All rights reserved.
+          </p>
+        </div>
+      </footer>
+    </div>
+  )
+}
