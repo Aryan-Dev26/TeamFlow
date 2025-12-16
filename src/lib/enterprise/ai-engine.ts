@@ -228,7 +228,7 @@ export class AIAssistantEngine {
         confidence: 0,
         response: 'I apologize, but I encountered an error processing your request. Please try again.',
         actions: [],
-        metadata: { error: error.message }
+        metadata: { error: error instanceof Error ? error.message : String(error) }
       }
     } finally {
       this.processingQueue.delete(request.id)
