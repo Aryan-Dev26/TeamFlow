@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useTeamFlowData } from '@/hooks/use-teamflow-data'
 
 interface CreateTaskModalProps {
   isOpen: boolean
@@ -43,6 +44,7 @@ const tagSuggestions = [
 ]
 
 export function CreateTaskModal({ isOpen, onClose, columns, onTaskCreated }: CreateTaskModalProps) {
+  const { createTask } = useTeamFlowData()
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -59,47 +61,54 @@ export function CreateTaskModal({ isOpen, onClose, columns, onTaskCreated }: Cre
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    try {
+      // Find assignee details
+      const assigneeDetails = formData.assignee 
+        ? teamMembers.find(member => member.id === formData.assignee)
+        : null
 
-    // Find assignee details
-    const assigneeDetails = formData.assignee 
-      ? teamMembers.find(member => member.id === formData.assignee)
-      : null
+      // Create task object
+      const newTaskData = {
+        title: formData.title,
+        description: formData.description,
+        priority: formData.priority,
+        columnId: formData.column,
+        assignee: assigneeDetails ? {
+          name: assigneeDetails.name,
+          initials: assigneeDetails.initials,
+          avatar: assigneeDetails.avatar
+        } : null,
+        dueDate: formData.dueDate,
+        tags: formData.tags
+      }
 
-    // Create task object
-    const newTask = {
-      title: formData.title,
-      description: formData.description,
-      priority: formData.priority,
-      columnId: formData.column,
-      assignee: assigneeDetails ? {
-        name: assigneeDetails.name,
-        initials: assigneeDetails.initials,
-        avatar: assigneeDetails.avatar
-      } : null,
-      dueDate: formData.dueDate,
-      tags: formData.tags
+      // Create the task using the storage system
+      const createdTask = createTask(newTaskData)
+      
+      // Call the callback if provided
+      if (onTaskCreated) {
+        onTaskCreated(createdTask)
+      }
+      
+      // Reset form
+      setFormData({
+        title: '',
+        description: '',
+        priority: 'Medium',
+        assignee: '',
+        column: 'todo',
+        dueDate: '',
+        tags: []
+      })
+      setTagInput('')
+      
+      // Close modal
+      onClose()
+    } catch (error) {
+      console.error('Error creating task:', error)
+    } finally {
+      setIsSubmitting(false)
     }
-
-    // Call the callback to create the task
-    if (onTaskCreated) {
-      onTaskCreated(newTask)
-    }
-    
-    // Reset form
-    setFormData({
-      title: '',
-      description: '',
-      priority: 'Medium',
-      assignee: '',
-      column: 'todo',
-      dueDate: '',
-      tags: []
-    })
-    setTagInput('')
-    setIsSubmitting(false)
-    onClose()
   }
 
   const addTag = (tag: string) => {

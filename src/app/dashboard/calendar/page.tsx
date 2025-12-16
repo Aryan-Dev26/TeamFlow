@@ -393,6 +393,9 @@ export default function CalendarPage() {
           { id: 'review', title: 'Review', color: 'bg-purple-500' },
           { id: 'done', title: 'Done', color: 'bg-green-500' }
         ]}
+        onTaskCreated={(task) => {
+          console.log('Task created from calendar:', task)
+        }}
       />
 
       <TaskDetailModal

@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { aiAssistant } from '@/lib/ai-assistant'
+import { useTeamFlowData } from '@/hooks/use-teamflow-data'
 
 interface AITaskModalProps {
   isOpen: boolean
@@ -33,6 +34,7 @@ const teamMembers = [
 ]
 
 export function AITaskModal({ isOpen, onClose, columns, onTaskCreated }: AITaskModalProps) {
+  const { createTask } = useTeamFlowData()
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -115,44 +117,52 @@ export function AITaskModal({ isOpen, onClose, columns, onTaskCreated }: AITaskM
     e.preventDefault()
     setIsSubmitting(true)
 
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    try {
+      const assigneeDetails = formData.assignee 
+        ? teamMembers.find(member => member.id === formData.assignee)
+        : null
 
-    const assigneeDetails = formData.assignee 
-      ? teamMembers.find(member => member.id === formData.assignee)
-      : null
+      const newTaskData = {
+        title: formData.title,
+        description: formData.description,
+        priority: formData.priority,
+        columnId: formData.column,
+        assignee: assigneeDetails ? {
+          name: assigneeDetails.name,
+          initials: assigneeDetails.initials,
+          avatar: assigneeDetails.avatar
+        } : null,
+        dueDate: formData.dueDate,
+        tags: formData.tags
+      }
 
-    const newTask = {
-      title: formData.title,
-      description: formData.description,
-      priority: formData.priority,
-      columnId: formData.column,
-      assignee: assigneeDetails ? {
-        name: assigneeDetails.name,
-        initials: assigneeDetails.initials,
-        avatar: assigneeDetails.avatar
-      } : null,
-      dueDate: formData.dueDate,
-      tags: formData.tags
+      // Create the task using the storage system
+      const createdTask = createTask(newTaskData)
+
+      if (onTaskCreated) {
+        onTaskCreated(createdTask)
+      }
+      
+      // Reset form
+      setFormData({
+        title: '',
+        description: '',
+        priority: 'Medium',
+        assignee: '',
+        column: 'todo',
+        dueDate: '',
+        tags: []
+      })
+      setAiSuggestions([])
+      setAiAnalysis(null)
+      
+      // Close modal
+      onClose()
+    } catch (error) {
+      console.error('Error creating AI task:', error)
+    } finally {
+      setIsSubmitting(false)
     }
-
-    if (onTaskCreated) {
-      onTaskCreated(newTask)
-    }
-    
-    // Reset form
-    setFormData({
-      title: '',
-      description: '',
-      priority: 'Medium',
-      assignee: '',
-      column: 'todo',
-      dueDate: '',
-      tags: []
-    })
-    setAiSuggestions([])
-    setAiAnalysis(null)
-    setIsSubmitting(false)
-    onClose()
   }
 
   if (!isOpen) return null
