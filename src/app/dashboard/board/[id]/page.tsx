@@ -355,14 +355,10 @@ export default function BoardPage({ params }: { params: { id: string } }) {
                           {column.tasks.map((task, index) => (
                             <Draggable key={task.id} draggableId={task.id} index={index}>
                               {(provided, snapshot) => (
-                                <motion.div
+                                <div
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
-                                  initial={{ opacity: 0, scale: 0.9 }}
-                                  animate={{ opacity: 1, scale: 1 }}
-                                  exit={{ opacity: 0, scale: 0.9 }}
-                                  transition={{ duration: 0.2 }}
                                   className={cn(
                                     'transform transition-transform',
                                     snapshot.isDragging && 'rotate-3 scale-105 shadow-lg'
@@ -370,7 +366,7 @@ export default function BoardPage({ params }: { params: { id: string } }) {
                                   onClick={() => handleTaskClick(task)}
                                 >
                                   <TaskCard task={task} />
-                                </motion.div>
+                                </div>
                               )}
                             </Draggable>
                           ))}
