@@ -46,26 +46,7 @@ const features = [
   }
 ]
 
-const testimonials = [
-  {
-    name: 'Hiroshi Tanaka',
-    role: 'Engineering Manager at Sony',
-    content: 'TeamFlow transformed how our distributed team collaborates. The real-time features are incredible.',
-    avatar: '/avatars/hiroshi.jpg'
-  },
-  {
-    name: 'Sarah Chen',
-    role: 'Product Lead at Rakuten',
-    content: 'The best project management tool we\'ve used. Clean interface and powerful features.',
-    avatar: '/avatars/sarah.jpg'
-  },
-  {
-    name: 'Michael Rodriguez',
-    role: 'CTO at StartupXYZ',
-    content: 'Seamless integration with our existing workflow. Our productivity increased by 40%.',
-    avatar: '/avatars/michael.jpg'
-  }
-]
+
 
 export default function LandingPage() {
   return (
@@ -182,53 +163,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Trusted by teams worldwide
-            </h2>
-            <div className="flex items-center justify-center space-x-1 mb-4">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
-              ))}
-              <span className="ml-2 text-gray-600 dark:text-gray-300">4.9/5 from 2,000+ reviews</span>
-            </div>
-          </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={testimonial.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg"
-              >
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  "{testimonial.content}"
-                </p>
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                    <span className="text-white font-semibold text-sm">
-                      {testimonial.name.split(' ').map(n => n[0]).join('')}
-                    </span>
-                  </div>
-                  <div>
-                    <div className="font-semibold text-gray-900 dark:text-white">
-                      {testimonial.name}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {testimonial.role}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Future Scope Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
