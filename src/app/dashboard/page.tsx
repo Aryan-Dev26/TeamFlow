@@ -26,6 +26,9 @@ import { Progress } from '@/components/ui/progress'
 import { AIChat } from '@/components/dashboard/ai-chat'
 import { AITaskModal } from '@/components/dashboard/ai-task-modal'
 import { CreateTaskModal } from '@/components/dashboard/create-task-modal'
+import { ActivityFeed } from '@/components/collaboration/activity-feed'
+import { TeamPresence } from '@/components/collaboration/team-presence'
+import { useTeamFlowData } from '@/hooks/use-teamflow-data'
 
 const stats = [
   {
@@ -162,6 +165,16 @@ export default function DashboardPage() {
   const [isAITaskModalOpen, setIsAITaskModalOpen] = useState(false)
   const [isAIChatMinimized, setIsAIChatMinimized] = useState(false)
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false)
+  const { user } = useTeamFlowData()
+
+  const getGreeting = () => {
+    const hour = new Date().getHours()
+    if (hour < 12) return 'Good morning'
+    if (hour < 18) return 'Good afternoon'
+    return 'Good evening'
+  }
+
+  const userName = user?.name?.split(' ')[0] || 'User'
 
   return (
     <div className="p-6 space-y-6">
@@ -169,7 +182,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Good morning, John! 👋
+            {getGreeting()}, {userName}! 👋
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
             Here's what's happening with your projects today.
@@ -448,6 +461,14 @@ export default function DashboardPage() {
           console.log('Task created:', task)
         }}
       />
+
+      {/* Collaboration Section - Desktop Only */}
+      <div className="hidden lg:block mt-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ActivityFeed />
+          <TeamPresence />
+        </div>
+      </div>
     </div>
   )
 }

@@ -9,7 +9,9 @@ export interface StorageData {
   activities: any[]
 }
 
-const STORAGE_KEY = 'teamflow_data'
+const getStorageKey = (userId?: string) => {
+  return userId ? `teamflow_data_${userId}` : 'teamflow_data'
+}
 
 // Initialize default data structure
 const defaultData: StorageData = {
@@ -169,25 +171,29 @@ const defaultData: StorageData = {
 }
 
 export class StorageManager {
-  private static instance: StorageManager
+  private static instances: Map<string, StorageManager> = new Map()
   private data: StorageData
+  private userId?: string
 
-  private constructor() {
+  private constructor(userId?: string) {
+    this.userId = userId
     this.data = this.loadData()
   }
 
-  public static getInstance(): StorageManager {
-    if (!StorageManager.instance) {
-      StorageManager.instance = new StorageManager()
+  public static getInstance(userId?: string): StorageManager {
+    const key = userId || 'default'
+    if (!StorageManager.instances.has(key)) {
+      StorageManager.instances.set(key, new StorageManager(userId))
     }
-    return StorageManager.instance
+    return StorageManager.instances.get(key)!
   }
 
   private loadData(): StorageData {
     if (typeof window === 'undefined') return defaultData
     
     try {
-      const stored = localStorage.getItem(STORAGE_KEY)
+      const storageKey = getStorageKey(this.userId)
+      const stored = localStorage.getItem(storageKey)
       if (stored) {
         const parsedData = JSON.parse(stored)
         // Merge with default data to ensure all properties exist
@@ -197,16 +203,28 @@ export class StorageManager {
       console.error('Error loading data from localStorage:', error)
     }
     
-    // Initialize with default data
-    this.saveData(defaultData)
-    return defaultData
+    // Initialize with default data for new users
+    const newUserData = { ...defaultData }
+    if (this.userId) {
+      // Customize default data for the user
+      newUserData.user = {
+        id: this.userId,
+        name: 'User',
+        email: 'user@example.com',
+        avatar: null,
+        initials: 'U'
+      }
+    }
+    this.saveData(newUserData)
+    return newUserData
   }
 
   private saveData(data: StorageData): void {
     if (typeof window === 'undefined') return
     
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+      const storageKey = getStorageKey(this.userId)
+      localStorage.setItem(storageKey, JSON.stringify(data))
       this.data = data
     } catch (error) {
       console.error('Error saving data to localStorage:', error)
@@ -215,11 +233,11 @@ export class StorageManager {
 
   // Boards
   public getBoards(): any[] {
-    return this.data.boards
+    return this.data?.boards || []
   }
 
   public getBoardById(id: string): any | null {
-    return this.data.boards.find(board => board.id === id) || null
+    return this.data?.boards?.find(board => board.id === id) || null
   }
 
   public createBoard(board: any): any {

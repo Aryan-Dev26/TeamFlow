@@ -7,37 +7,48 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { Github, Mail, Eye, EyeOff, ArrowLeft } from 'lucide-react'
+import { Github, Mail, Eye, EyeOff, ArrowLeft, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import TeamFlowLogo from '@/components/ui/teamflow-logo'
+import { useAuth } from '@/contexts/auth-context'
 
 export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
   const router = useRouter()
+  const { login, isLoading } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
+    setError('')
     
-    // Simulate authentication
-    setTimeout(() => {
-      setIsLoading(false)
+    if (!email || !password) {
+      setError('Please fill in all fields')
+      return
+    }
+
+    const success = await login(email, password)
+    if (success) {
       router.push('/dashboard')
-    }, 1500)
+    } else {
+      setError('Invalid email or password')
+    }
   }
 
-  const handleOAuthSignIn = (provider: string) => {
-    setIsLoading(true)
-    // Simulate OAuth flow
-    setTimeout(() => {
-      setIsLoading(false)
+  const handleOAuthSignIn = async (provider: string) => {
+    setError('')
+    // For demo purposes, create a demo user with OAuth provider
+    const demoEmail = `demo@${provider}.com`
+    const success = await login(demoEmail, 'demo123')
+    if (success) {
       router.push('/dashboard')
-    }, 2000)
+    } else {
+      setError(`Failed to sign in with ${provider}`)
+    }
   }
 
   return (
@@ -74,6 +85,17 @@ export default function SignInPage() {
           </CardHeader>
           
           <CardContent className="space-y-4">
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center space-x-2 text-red-600 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg"
+              >
+                <AlertCircle className="h-4 w-4" />
+                <span className="text-sm">{error}</span>
+              </motion.div>
+            )}
+            
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>

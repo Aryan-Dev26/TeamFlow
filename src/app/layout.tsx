@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/providers/theme-provider'
@@ -13,7 +13,17 @@ export const metadata: Metadata = {
   description: 'Real-time collaborative workspace for teams to manage tasks, projects, and workflows efficiently.',
   keywords: ['task management', 'collaboration', 'productivity', 'kanban', 'team workspace'],
   authors: [{ name: 'TeamFlow' }],
-  viewport: 'width=device-width, initial-scale=1',
+  manifest: '/manifest.json',
+  icons: {
+    icon: '/icons/icon.svg',
+    apple: '/icons/icon.svg',
+  },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
   themeColor: '#3B82F6',
 }
 

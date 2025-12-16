@@ -7,41 +7,64 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { Github, Mail, Eye, EyeOff, ArrowLeft, CheckCircle } from 'lucide-react'
+import { Github, Mail, Eye, EyeOff, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import TeamFlowLogo from '@/components/ui/teamflow-logo'
+import { useAuth } from '@/contexts/auth-context'
 
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: ''
   })
+  const [error, setError] = useState('')
   const router = useRouter()
+  const { signup, isLoading } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
+    setError('')
     
-    // Simulate registration
-    setTimeout(() => {
-      setIsLoading(false)
+    // Validation
+    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
+      setError('Please fill in all fields')
+      return
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters long')
+      return
+    }
+
+    const success = await signup(formData.name, formData.email, formData.password)
+    if (success) {
       router.push('/dashboard')
-    }, 2000)
+    } else {
+      setError('User with this email already exists')
+    }
   }
 
-  const handleOAuthSignUp = (provider: string) => {
-    setIsLoading(true)
-    // Simulate OAuth flow
-    setTimeout(() => {
-      setIsLoading(false)
+  const handleOAuthSignUp = async (provider: string) => {
+    setError('')
+    // For demo purposes, create a demo user with OAuth provider
+    const demoName = `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`
+    const demoEmail = `demo@${provider}.com`
+    const success = await signup(demoName, demoEmail, 'demo123')
+    if (success) {
       router.push('/dashboard')
-    }, 2000)
+    } else {
+      setError(`Failed to sign up with ${provider}`)
+    }
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,6 +108,17 @@ export default function SignUpPage() {
           </CardHeader>
           
           <CardContent className="space-y-4">
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center space-x-2 text-red-600 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg"
+              >
+                <AlertCircle className="h-4 w-4" />
+                <span className="text-sm">{error}</span>
+              </motion.div>
+            )}
+            
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>

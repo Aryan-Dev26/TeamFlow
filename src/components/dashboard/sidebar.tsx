@@ -20,9 +20,10 @@ import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import TeamFlowLogo from '@/components/ui/teamflow-logo'
 import { CreateBoardModal } from './create-board-modal'
+import { useAuth } from '@/contexts/auth-context'
 
 const workspaces = [
   {
@@ -185,49 +186,7 @@ export function Sidebar() {
       </div>
 
       {/* User Profile */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="w-full p-2 h-auto justify-start">
-              <div className="flex items-center space-x-3 w-full">
-                <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-medium text-sm">JD</span>
-                </div>
-                <div className="flex-1 min-w-0 text-left">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                    John Doe
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                    john@example.com
-                  </p>
-                </div>
-                <MoreHorizontal className="h-4 w-4" />
-              </div>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem asChild>
-              <Link href="/dashboard/settings" className="flex items-center">
-                <User className="h-4 w-4 mr-2" />
-                Profile Settings
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/dashboard/settings" className="flex items-center">
-                <Settings className="h-4 w-4 mr-2" />
-                Preferences
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <span className="flex items-center text-red-600">
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+      <UserProfile />
 
       {/* Create Board Modal */}
       <CreateBoardModal
@@ -239,6 +198,76 @@ export function Sidebar() {
           setIsCreateBoardModalOpen(false)
         }}
       />
+    </div>
+  )
+}
+
+function UserProfile() {
+  const { user, logout } = useAuth()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    console.log('Logout clicked - sidebar')
+    logout()
+    // Small delay to ensure logout completes
+    await new Promise(resolve => setTimeout(resolve, 100))
+    // Use window.location for a clean redirect
+    window.location.href = '/auth/signin'
+  }
+
+  if (!user) return null
+
+  return (
+    <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="w-full p-2 h-auto justify-start">
+            <div className="flex items-center space-x-3 w-full">
+              <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-medium text-sm">
+                  {user.initials}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0 text-left">
+                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                  {user.name}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                  {user.email}
+                </p>
+              </div>
+              <MoreHorizontal className="h-4 w-4" />
+            </div>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/settings" className="flex items-center">
+              <User className="h-4 w-4 mr-2" />
+              Profile Settings
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/settings" className="flex items-center">
+              <Settings className="h-4 w-4 mr-2" />
+              Preferences
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem 
+            onClick={(e) => {
+              e.preventDefault()
+              handleLogout()
+            }}
+            className="cursor-pointer"
+          >
+            <span className="flex items-center text-red-600">
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   )
 }
