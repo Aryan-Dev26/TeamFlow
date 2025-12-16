@@ -84,7 +84,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           id: existingUser.id,
           name: existingUser.name,
           email: existingUser.email,
-          avatar: existingUser.avatar,
+          avatar: existingUser.avatar || undefined,
           initials: existingUser.initials,
           createdAt: existingUser.createdAt
         }
@@ -152,7 +152,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         id: newUser.id,
         name: newUser.name,
         email: newUser.email,
-        avatar: newUser.avatar,
+        avatar: undefined, // Avatar can be added later
         initials: newUser.initials,
         createdAt: newUser.createdAt
       }
