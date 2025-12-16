@@ -1,5 +1,6 @@
 import { Sidebar } from '@/components/dashboard/sidebar'
 import { Header } from '@/components/dashboard/header'
+import { FloatingAIButton } from '@/components/dashboard/floating-ai-button'
 
 export default function DashboardLayout({
   children,
@@ -11,8 +12,9 @@ export default function DashboardLayout({
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto relative">
           {children}
+          <FloatingAIButton />
         </main>
       </div>
     </div>

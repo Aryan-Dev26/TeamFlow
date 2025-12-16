@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { 
   Plus, 
@@ -10,13 +11,18 @@ import {
   TrendingUp,
   Calendar,
   MessageSquare,
-  MoreHorizontal
+  MoreHorizontal,
+  Bot,
+  Sparkles,
+  Brain
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Progress } from '@/components/ui/progress'
+import { AIChat } from '@/components/dashboard/ai-chat'
+import { AITaskModal } from '@/components/dashboard/ai-task-modal'
 
 const stats = [
   {
@@ -149,6 +155,10 @@ const getStatusColor = (status: string) => {
 }
 
 export default function DashboardPage() {
+  const [isAIChatOpen, setIsAIChatOpen] = useState(false)
+  const [isAITaskModalOpen, setIsAITaskModalOpen] = useState(false)
+  const [isAIChatMinimized, setIsAIChatMinimized] = useState(false)
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -162,9 +172,21 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="flex items-center space-x-3">
+          <Button 
+            variant="outline"
+            onClick={() => setIsAIChatOpen(true)}
+            className="bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200 hover:from-purple-100 hover:to-blue-100"
+          >
+            <Bot className="h-4 w-4 mr-2 text-purple-600" />
+            AI Assistant
+          </Button>
           <Button variant="outline">
             <Calendar className="h-4 w-4 mr-2" />
             Schedule
+          </Button>
+          <Button onClick={() => setIsAITaskModalOpen(true)}>
+            <Sparkles className="h-4 w-4 mr-2" />
+            AI Task
           </Button>
           <Button>
             <Plus className="h-4 w-4 mr-2" />
@@ -333,6 +355,22 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start bg-gradient-to-r from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 border border-purple-200"
+                  onClick={() => setIsAITaskModalOpen(true)}
+                >
+                  <Brain className="h-4 w-4 mr-2 text-purple-600" />
+                  AI Smart Task
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start"
+                  onClick={() => setIsAIChatOpen(true)}
+                >
+                  <Bot className="h-4 w-4 mr-2" />
+                  Ask AI Assistant
+                </Button>
                 <Button variant="ghost" className="w-full justify-start">
                   <Plus className="h-4 w-4 mr-2" />
                   Create New Task
@@ -354,6 +392,29 @@ export default function DashboardPage() {
           </Card>
         </div>
       </div>
+
+      {/* AI Components */}
+      <AIChat
+        isOpen={isAIChatOpen}
+        onClose={() => setIsAIChatOpen(false)}
+        onMinimize={() => setIsAIChatMinimized(!isAIChatMinimized)}
+        isMinimized={isAIChatMinimized}
+      />
+
+      <AITaskModal
+        isOpen={isAITaskModalOpen}
+        onClose={() => setIsAITaskModalOpen(false)}
+        columns={[
+          { id: 'todo', title: 'To Do', color: 'bg-gray-500' },
+          { id: 'in-progress', title: 'In Progress', color: 'bg-blue-500' },
+          { id: 'review', title: 'Review', color: 'bg-purple-500' },
+          { id: 'done', title: 'Done', color: 'bg-green-500' }
+        ]}
+        onTaskCreated={(task) => {
+          console.log('AI Task created:', task)
+          setIsAITaskModalOpen(false)
+        }}
+      />
     </div>
   )
 }
