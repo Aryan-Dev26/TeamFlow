@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { 
   Search, 
   Bell, 
@@ -24,8 +25,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { CreateTaskModal } from './create-task-modal'
 
 export function Header() {
+  const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false)
   const [notifications] = useState([
     { id: 1, message: 'New task assigned to you', time: '2m ago', unread: true },
     { id: 2, message: 'Project deadline approaching', time: '1h ago', unread: true },
@@ -50,7 +53,11 @@ export function Header() {
       {/* Actions */}
       <div className="flex items-center space-x-2">
         {/* Quick Actions */}
-        <Button size="sm" className="hidden sm:flex">
+        <Button 
+          size="sm" 
+          className="hidden sm:flex"
+          onClick={() => setIsCreateTaskModalOpen(true)}
+        >
           <Plus className="h-4 w-4 mr-2" />
           New Task
         </Button>
@@ -127,17 +134,21 @@ export function Header() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/settings" className="flex items-center">
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Users className="mr-2 h-4 w-4" />
               <span>Team Settings</span>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/settings" className="flex items-center">
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-red-600">
@@ -147,6 +158,18 @@ export function Header() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {/* Create Task Modal */}
+      <CreateTaskModal
+        isOpen={isCreateTaskModalOpen}
+        onClose={() => setIsCreateTaskModalOpen(false)}
+        columns={[
+          { id: 'todo', title: 'To Do', color: 'bg-gray-500' },
+          { id: 'in-progress', title: 'In Progress', color: 'bg-blue-500' },
+          { id: 'review', title: 'Review', color: 'bg-purple-500' },
+          { id: 'done', title: 'Done', color: 'bg-green-500' }
+        ]}
+      />
     </header>
   )
 }

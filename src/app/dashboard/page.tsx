@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { 
   Plus, 
   Users, 
@@ -14,7 +15,8 @@ import {
   MoreHorizontal,
   Bot,
   Sparkles,
-  Brain
+  Brain,
+  ArrowRight
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -23,6 +25,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Progress } from '@/components/ui/progress'
 import { AIChat } from '@/components/dashboard/ai-chat'
 import { AITaskModal } from '@/components/dashboard/ai-task-modal'
+import { CreateTaskModal } from '@/components/dashboard/create-task-modal'
 
 const stats = [
   {
@@ -158,6 +161,7 @@ export default function DashboardPage() {
   const [isAIChatOpen, setIsAIChatOpen] = useState(false)
   const [isAITaskModalOpen, setIsAITaskModalOpen] = useState(false)
   const [isAIChatMinimized, setIsAIChatMinimized] = useState(false)
+  const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false)
 
   return (
     <div className="p-6 space-y-6">
@@ -180,15 +184,17 @@ export default function DashboardPage() {
             <Bot className="h-4 w-4 mr-2 text-purple-600" />
             AI Assistant
           </Button>
-          <Button variant="outline">
-            <Calendar className="h-4 w-4 mr-2" />
-            Schedule
-          </Button>
+          <Link href="/dashboard/calendar">
+            <Button variant="outline">
+              <Calendar className="h-4 w-4 mr-2" />
+              Schedule
+            </Button>
+          </Link>
           <Button onClick={() => setIsAITaskModalOpen(true)}>
             <Sparkles className="h-4 w-4 mr-2" />
             AI Task
           </Button>
-          <Button>
+          <Button onClick={() => setIsCreateTaskModalOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             New Task
           </Button>
@@ -248,9 +254,12 @@ export default function DashboardPage() {
                     Tasks that need your attention
                   </CardDescription>
                 </div>
-                <Button variant="ghost" size="sm">
-                  View All
-                </Button>
+                <Link href="/dashboard/tasks">
+                  <Button variant="ghost" size="sm">
+                    View All
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </Link>
               </div>
             </CardHeader>
             <CardContent>
@@ -371,7 +380,11 @@ export default function DashboardPage() {
                   <Bot className="h-4 w-4 mr-2" />
                   Ask AI Assistant
                 </Button>
-                <Button variant="ghost" className="w-full justify-start">
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start"
+                  onClick={() => setIsCreateTaskModalOpen(true)}
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   Create New Task
                 </Button>
@@ -379,14 +392,20 @@ export default function DashboardPage() {
                   <Users className="h-4 w-4 mr-2" />
                   Invite Team Member
                 </Button>
-                <Button variant="ghost" className="w-full justify-start">
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start"
+                  onClick={() => setIsAIChatOpen(true)}
+                >
                   <MessageSquare className="h-4 w-4 mr-2" />
                   Start Team Chat
                 </Button>
-                <Button variant="ghost" className="w-full justify-start">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Schedule Meeting
-                </Button>
+                <Link href="/dashboard/calendar">
+                  <Button variant="ghost" className="w-full justify-start">
+                    <Calendar className="h-4 w-4 mr-2" />
+                    Schedule Meeting
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>
@@ -414,6 +433,17 @@ export default function DashboardPage() {
           console.log('AI Task created:', task)
           setIsAITaskModalOpen(false)
         }}
+      />
+
+      <CreateTaskModal
+        isOpen={isCreateTaskModalOpen}
+        onClose={() => setIsCreateTaskModalOpen(false)}
+        columns={[
+          { id: 'todo', title: 'To Do', color: 'bg-gray-500' },
+          { id: 'in-progress', title: 'In Progress', color: 'bg-blue-500' },
+          { id: 'review', title: 'Review', color: 'bg-purple-500' },
+          { id: 'done', title: 'Done', color: 'bg-green-500' }
+        ]}
       />
     </div>
   )

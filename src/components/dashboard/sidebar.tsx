@@ -12,13 +12,17 @@ import {
   MoreHorizontal,
   Hash,
   Calendar,
-  BarChart3
+  BarChart3,
+  User,
+  LogOut
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import TeamFlowLogo from '@/components/ui/teamflow-logo'
+import { CreateBoardModal } from './create-board-modal'
 
 const workspaces = [
   {
@@ -57,10 +61,13 @@ const navigation = [
   { name: 'My Tasks', href: '/dashboard/tasks', icon: Users },
   { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
+  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ]
 
 export function Sidebar() {
   const [expandedWorkspaces, setExpandedWorkspaces] = useState<string[]>(['1', '2'])
+  const [isCreateBoardModalOpen, setIsCreateBoardModalOpen] = useState(false)
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string>('')
   const pathname = usePathname()
 
   const toggleWorkspace = (workspaceId: string) => {
@@ -160,6 +167,10 @@ export function Sidebar() {
                         variant="ghost"
                         size="sm"
                         className="w-full justify-start text-xs text-gray-400 hover:text-gray-600"
+                        onClick={() => {
+                          setSelectedWorkspaceId(workspace.id)
+                          setIsCreateBoardModalOpen(true)
+                        }}
                       >
                         <Plus className="h-3 w-3 mr-2" />
                         Add board
@@ -175,23 +186,59 @@ export function Sidebar() {
 
       {/* User Profile */}
       <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-            <span className="text-white font-medium text-sm">JD</span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-              John Doe
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-              john@example.com
-            </p>
-          </div>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="w-full p-2 h-auto justify-start">
+              <div className="flex items-center space-x-3 w-full">
+                <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-medium text-sm">JD</span>
+                </div>
+                <div className="flex-1 min-w-0 text-left">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                    John Doe
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    john@example.com
+                  </p>
+                </div>
+                <MoreHorizontal className="h-4 w-4" />
+              </div>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/settings" className="flex items-center">
+                <User className="h-4 w-4 mr-2" />
+                Profile Settings
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/settings" className="flex items-center">
+                <Settings className="h-4 w-4 mr-2" />
+                Preferences
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <span className="flex items-center text-red-600">
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
+
+      {/* Create Board Modal */}
+      <CreateBoardModal
+        isOpen={isCreateBoardModalOpen}
+        onClose={() => setIsCreateBoardModalOpen(false)}
+        workspaceId={selectedWorkspaceId}
+        onBoardCreated={(board) => {
+          console.log('Board created:', board)
+          setIsCreateBoardModalOpen(false)
+        }}
+      />
     </div>
   )
 }
