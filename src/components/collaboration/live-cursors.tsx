@@ -7,8 +7,30 @@ import { RealtimeManager, RealtimeUser } from '@/lib/realtime'
 export function LiveCursors() {
   const [users, setUsers] = useState<RealtimeUser[]>([])
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [liveCursorsEnabled, setLiveCursorsEnabled] = useState(true)
+
+  // Check if live cursors are enabled
+  useEffect(() => {
+    const checkLiveCursorsEnabled = () => {
+      const savedSetting = localStorage.getItem('teamflow-live-cursors')
+      setLiveCursorsEnabled(savedSetting !== null ? JSON.parse(savedSetting) : true)
+    }
+
+    checkLiveCursorsEnabled()
+
+    // Listen for storage changes to update in real-time
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'teamflow-live-cursors') {
+        setLiveCursorsEnabled(e.newValue !== null ? JSON.parse(e.newValue) : true)
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
+  }, [])
 
   useEffect(() => {
+    if (!liveCursorsEnabled) return
     const realtime = RealtimeManager.getInstance()
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -28,48 +50,70 @@ export function LiveCursors() {
     realtime.on('user_join', handleUserJoin)
     realtime.on('cursor_move', handleCursorMove)
 
-    // Simulate other users for demo
-    setTimeout(() => {
-      const demoUsers: RealtimeUser[] = [
-        {
-          id: 'demo-1',
-          name: 'Sarah Chen',
-          initials: 'SC',
-          cursor: { x: 300, y: 200 },
-          activeTask: 'task-1',
-          lastSeen: new Date().toISOString()
-        },
-        {
-          id: 'demo-2',
-          name: 'Mike Johnson',
-          initials: 'MJ',
-          cursor: { x: 600, y: 400 },
-          activeTask: 'task-2',
-          lastSeen: new Date().toISOString()
-        }
-      ]
+    // Simulate other users for demo (only if live cursors are enabled)
+    let demoTimeout: NodeJS.Timeout
+    const intervals: NodeJS.Timeout[] = []
 
-      demoUsers.forEach(user => {
-        realtime.setCurrentUser(user)
-        // Animate cursors
-        setInterval(() => {
-          const newX = user.cursor!.x + (Math.random() - 0.5) * 100
-          const newY = user.cursor!.y + (Math.random() - 0.5) * 100
-          user.cursor = { 
-            x: Math.max(0, Math.min(window.innerWidth - 50, newX)),
-            y: Math.max(0, Math.min(window.innerHeight - 50, newY))
+    if (liveCursorsEnabled) {
+      demoTimeout = setTimeout(() => {
+        const demoUsers: RealtimeUser[] = [
+          {
+            id: 'demo-1',
+            name: 'Sarah Chen',
+            initials: 'SC',
+            cursor: { x: 300, y: 200 },
+            activeTask: 'task-1',
+            lastSeen: new Date().toISOString()
+          },
+          {
+            id: 'demo-2',
+            name: 'Mike Johnson',
+            initials: 'MJ',
+            cursor: { x: 600, y: 400 },
+            activeTask: 'task-2',
+            lastSeen: new Date().toISOString()
           }
-          realtime.updateUserCursor(user.cursor.x, user.cursor.y)
-        }, 3000)
-      })
-    }, 2000)
+        ]
+
+        demoUsers.forEach(user => {
+          realtime.setCurrentUser(user)
+          // Animate cursors
+          const interval = setInterval(() => {
+            // Check if live cursors are still enabled
+            const currentSetting = localStorage.getItem('teamflow-live-cursors')
+            const isEnabled = currentSetting !== null ? JSON.parse(currentSetting) : true
+            
+            if (!isEnabled) {
+              clearInterval(interval)
+              return
+            }
+
+            const newX = user.cursor!.x + (Math.random() - 0.5) * 100
+            const newY = user.cursor!.y + (Math.random() - 0.5) * 100
+            user.cursor = { 
+              x: Math.max(0, Math.min(window.innerWidth - 50, newX)),
+              y: Math.max(0, Math.min(window.innerHeight - 50, newY))
+            }
+            realtime.updateUserCursor(user.cursor.x, user.cursor.y)
+          }, 3000)
+          intervals.push(interval)
+        })
+      }, 2000)
+    }
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove)
       realtime.off('user_join', handleUserJoin)
       realtime.off('cursor_move', handleCursorMove)
+      if (demoTimeout) clearTimeout(demoTimeout)
+      intervals.forEach(clearInterval)
     }
-  }, [])
+  }, [liveCursorsEnabled])
+
+  // Don't render anything if live cursors are disabled
+  if (!liveCursorsEnabled) {
+    return null
+  }
 
   return (
     <div className="fixed inset-0 pointer-events-none z-50">

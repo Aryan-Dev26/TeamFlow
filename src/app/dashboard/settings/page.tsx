@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { 
   Settings as SettingsIcon, 
@@ -79,8 +79,20 @@ export default function SettingsPage() {
     dateFormat: 'MM/DD/YYYY',
     timeFormat: '24h',
     startOfWeek: 'monday',
-    defaultView: 'kanban'
+    defaultView: 'kanban',
+    liveCursors: true
   })
+
+  // Load live cursors setting from localStorage
+  useEffect(() => {
+    const savedLiveCursors = localStorage.getItem('teamflow-live-cursors')
+    if (savedLiveCursors !== null) {
+      setPreferences(prev => ({ 
+        ...prev, 
+        liveCursors: JSON.parse(savedLiveCursors) 
+      }))
+    }
+  }, [])
 
   const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
@@ -582,6 +594,29 @@ export default function SettingsPage() {
                   <SelectItem value="calendar">Calendar View</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Collaboration Features */}
+          <div className="space-y-4">
+            <h4 className="font-medium">Collaboration Features</h4>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium">Live Cursors</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Show real-time cursor movements from other team members
+                </p>
+              </div>
+              <Switch
+                checked={preferences.liveCursors}
+                onCheckedChange={(checked) => {
+                  setPreferences(prev => ({ ...prev, liveCursors: checked }))
+                  // Save to localStorage immediately
+                  localStorage.setItem('teamflow-live-cursors', JSON.stringify(checked))
+                }}
+              />
             </div>
           </div>
         </CardContent>
