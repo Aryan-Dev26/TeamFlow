@@ -150,7 +150,7 @@ export function AIChat({ isOpen, onClose, onMinimize, isMinimized }: AIChatProps
         }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.2 }}
-        className="fixed bottom-4 right-4 w-96 bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden"
+        className="fixed bottom-20 right-4 md:bottom-4 md:right-4 w-80 md:w-96 bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 z-40 overflow-hidden max-h-[70vh] md:max-h-[80vh]"
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-4 text-white">

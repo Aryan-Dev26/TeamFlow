@@ -28,13 +28,13 @@ export function FloatingAIButton() {
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            className="fixed bottom-6 right-6 z-40"
+            className="fixed bottom-20 right-4 z-30 md:bottom-6 md:right-6"
           >
             <Button
               onClick={handleToggle}
-              className="h-14 w-14 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-200 relative"
+              className="h-12 w-12 md:h-14 md:w-14 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-200 relative"
             >
-              <Bot className="h-6 w-6 text-white" />
+              <Bot className="h-5 w-5 md:h-6 md:w-6 text-white" />
               
               {/* Notification Badge */}
               {hasNewMessage && (
@@ -61,12 +61,12 @@ export function FloatingAIButton() {
               </motion.div>
             </Button>
 
-            {/* Tooltip */}
+            {/* Tooltip - Hidden on mobile */}
             <motion.div
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 1 }}
-              className="absolute right-16 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap shadow-lg"
+              className="hidden md:block absolute right-16 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap shadow-lg"
             >
               Ask AI Assistant
               <div className="absolute right-0 top-1/2 transform translate-x-1 -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45" />
