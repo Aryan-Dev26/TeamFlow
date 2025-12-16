@@ -565,6 +565,10 @@ export class EnterpriseWebSocketManager {
     return { ...this.stats }
   }
 
+  public getSocketIO(): SocketIOServer {
+    return this.io
+  }
+
   public getActiveUsers(): string[] {
     return Array.from(new Set(
       Array.from(this.userSessions.values()).map(session => session.userId)
