@@ -213,7 +213,7 @@ export default function BoardPage({ params }: { params: { id: string } }) {
 
   const filteredColumns = columnsWithTasks.map(column => ({
     ...column,
-    tasks: column.tasks.filter(task =>
+    tasks: column.tasks.filter((task: any) =>
       task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       task.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       task.tags.some((tag: string) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -363,7 +363,7 @@ export default function BoardPage({ params }: { params: { id: string } }) {
                         )}
                       >
                         <AnimatePresence>
-                          {column.tasks.map((task, index) => (
+                          {column.tasks.map((task: any, index: number) => (
                             <Draggable key={task.id} draggableId={task.id} index={index}>
                               {(provided, snapshot) => (
                                 <div
