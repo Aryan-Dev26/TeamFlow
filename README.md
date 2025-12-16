@@ -219,12 +219,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Prisma for the excellent ORM
 - All contributors and testers
 
-## 📞 Support
+## 📞 Contact & Support
 
-- 📧 Email: support@teamflow.dev
-- 💬 Discord: [Join our community](https://discord.gg/teamflow)
-- 📖 Documentation: [docs.teamflow.dev](https://docs.teamflow.dev)
+- 📧 **Email:** [aryandev26@gmail.com](mailto:aryandev26@gmail.com)
+- 💼 **LinkedIn:** [Connect with me](https://linkedin.com/in/aryan-dev26)
+- 🌐 **Live Demo:** [team-flow-alpha.vercel.app](https://team-flow-alpha.vercel.app)
+- 📂 **GitHub:** [View Source Code](https://github.com/Aryan-Dev26/TeamFlow)
 
 ---
 
-**Built with ❤️ for modern teams**
+**Built with ❤️ by Aryan for modern teams and Japanese companies**

@@ -20,6 +20,7 @@ interface CreateTaskModalProps {
     title: string
     color: string
   }>
+  onTaskCreated?: (task: any) => void
 }
 
 const teamMembers = [
@@ -41,7 +42,7 @@ const tagSuggestions = [
   'Bug Fix', 'Feature', 'Improvement', 'Security', 'Performance', 'Mobile'
 ]
 
-export function CreateTaskModal({ isOpen, onClose, columns }: CreateTaskModalProps) {
+export function CreateTaskModal({ isOpen, onClose, columns, onTaskCreated }: CreateTaskModalProps) {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -58,10 +59,33 @@ export function CreateTaskModal({ isOpen, onClose, columns }: CreateTaskModalPro
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1000))
 
-    console.log('Creating task:', formData)
+    // Find assignee details
+    const assigneeDetails = formData.assignee 
+      ? teamMembers.find(member => member.id === formData.assignee)
+      : null
+
+    // Create task object
+    const newTask = {
+      title: formData.title,
+      description: formData.description,
+      priority: formData.priority,
+      columnId: formData.column,
+      assignee: assigneeDetails ? {
+        name: assigneeDetails.name,
+        initials: assigneeDetails.initials,
+        avatar: assigneeDetails.avatar
+      } : null,
+      dueDate: formData.dueDate,
+      tags: formData.tags
+    }
+
+    // Call the callback to create the task
+    if (onTaskCreated) {
+      onTaskCreated(newTask)
+    }
     
     // Reset form
     setFormData({

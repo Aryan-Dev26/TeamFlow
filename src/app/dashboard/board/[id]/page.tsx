@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTeamFlowData } from '@/hooks/use-teamflow-data'
 import { 
   Plus, 
   MoreHorizontal, 
@@ -144,12 +145,33 @@ const teamMembers = [
 ]
 
 export default function BoardPage({ params }: { params: { id: string } }) {
-  const [columns, setColumns] = useState(initialColumns)
+  const {
+    getBoardById,
+    getColumnsByBoardId,
+    getTasksByColumnId,
+    moveTask,
+    createTask,
+    updateTask,
+    deleteTask
+  } = useTeamFlowData()
+
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedTask, setSelectedTask] = useState<any>(null)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isTaskDetailOpen, setIsTaskDetailOpen] = useState(false)
   const [activeUsers, setActiveUsers] = useState(teamMembers.filter(m => m.online))
+
+  // Get real data
+  const board = getBoardById(params.id)
+  const columns = getColumnsByBoardId(params.id)
+  
+  // Build columns with tasks
+  const columnsWithTasks = useMemo(() => {
+    return columns.map(column => ({
+      ...column,
+      tasks: getTasksByColumnId(column.id)
+    }))
+  }, [columns, getTasksByColumnId])
 
   // Simulate real-time user activity
   useEffect(() => {
@@ -175,39 +197,13 @@ export default function BoardPage({ params }: { params: { id: string } }) {
       return
     }
 
-    const sourceColumn = columns.find(col => col.id === source.droppableId)
-    const destColumn = columns.find(col => col.id === destination.droppableId)
-
-    if (!sourceColumn || !destColumn) return
-
-    const sourceTask = sourceColumn.tasks.find(task => task.id === draggableId)
-    if (!sourceTask) return
-
-    // Remove task from source column
-    const newSourceTasks = sourceColumn.tasks.filter(task => task.id !== draggableId)
+    // Move task using real data management
+    const success = moveTask(draggableId, destination.droppableId, destination.index)
     
-    // Add task to destination column
-    const newDestTasks = [...destColumn.tasks]
-    newDestTasks.splice(destination.index, 0, sourceTask)
-
-    // Update columns
-    const newColumns = columns.map(col => {
-      if (col.id === source.droppableId) {
-        return { ...col, tasks: newSourceTasks }
-      }
-      if (col.id === destination.droppableId) {
-        return { ...col, tasks: newDestTasks }
-      }
-      return col
-    })
-
-    setColumns(newColumns)
-
-    // Simulate real-time update notification
-    setTimeout(() => {
-      // This would normally be a socket event
-      console.log(`Task "${sourceTask.title}" moved to ${destColumn.title}`)
-    }, 100)
+    if (success) {
+      // Show success notification
+      console.log(`Task moved successfully`)
+    }
   }
 
   const handleTaskClick = (task: any) => {
@@ -215,14 +211,29 @@ export default function BoardPage({ params }: { params: { id: string } }) {
     setIsTaskDetailOpen(true)
   }
 
-  const filteredColumns = columns.map(column => ({
+  const filteredColumns = columnsWithTasks.map(column => ({
     ...column,
     tasks: column.tasks.filter(task =>
       task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       task.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      task.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+      task.tags.some((tag: string) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
     )
   }))
+
+  if (!board) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            Board Not Found
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            The board you're looking for doesn't exist.
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="h-full flex flex-col bg-gray-50 dark:bg-gray-900">
@@ -232,10 +243,10 @@ export default function BoardPage({ params }: { params: { id: string } }) {
           <div className="flex items-center space-x-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Website Redesign
+                {board.name}
               </h1>
               <p className="text-gray-600 dark:text-gray-400">
-                Design and development of the new company website
+                {board.description}
               </p>
             </div>
             <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
@@ -413,6 +424,10 @@ export default function BoardPage({ params }: { params: { id: string } }) {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         columns={columns}
+        onTaskCreated={(taskData) => {
+          createTask(taskData)
+          setIsCreateModalOpen(false)
+        }}
       />
 
       <TaskDetailModal
