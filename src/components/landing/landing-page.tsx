@@ -90,7 +90,7 @@ export default function LandingPage() {
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
               The modern workspace for teams that move fast. Manage projects, collaborate seamlessly, 
-              and ship faster with TeamFlow's real-time collaboration platform.
+              and ship faster with TeamFlow's enterprise collaboration platform.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
