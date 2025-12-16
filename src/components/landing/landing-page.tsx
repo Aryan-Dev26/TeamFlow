@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
+import TeamFlowLogo from '@/components/ui/teamflow-logo'
 
 const features = [
   {
@@ -66,10 +67,8 @@ export default function LandingPage() {
       <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">TF</span>
-              </div>
+            <div className="flex items-center space-x-3">
+              <TeamFlowLogo size="sm" showText={false} />
               <span className="text-xl font-bold text-gray-900 dark:text-white">TeamFlow</span>
             </div>
             
@@ -94,6 +93,9 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
+            <div className="mb-8">
+              <TeamFlowLogo size="xl" showText={true} />
+            </div>
             <h1 className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-6">
               Collaborate in
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Real-time</span>
@@ -240,10 +242,8 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">TF</span>
-            </div>
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <TeamFlowLogo size="sm" showText={false} />
             <span className="text-xl font-bold">TeamFlow</span>
           </div>
           <p className="text-gray-400 mb-4">

@@ -11,6 +11,7 @@ import { Github, Mail, Eye, EyeOff, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
+import TeamFlowLogo from '@/components/ui/teamflow-logo'
 
 export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -62,11 +63,9 @@ export default function SignInPage() {
       >
         <Card className="shadow-xl border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
           <CardHeader className="space-y-1 text-center">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">TF</span>
-              </div>
-              <span className="text-2xl font-bold text-gray-900 dark:text-white">TeamFlow</span>
+            <div className="flex flex-col items-center justify-center mb-4">
+              <TeamFlowLogo size="md" showText={false} />
+              <span className="text-2xl font-bold text-gray-900 dark:text-white mt-2">TeamFlow</span>
             </div>
             <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
             <CardDescription>
